@@ -45,6 +45,8 @@ body {
   font-family: var(--mono);
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
+  font-variant-ligatures: contextual common-ligatures;
+  font-feature-settings: "calt" 1, "liga" 1;
   overflow: hidden;
 }
 
@@ -381,9 +383,10 @@ body::after {
 }
 
 .tree-item.active {
-  background: rgba(0, 240, 255, 0.1);
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.16), rgba(157, 78, 221, 0.06));
   color: var(--cyan);
   border-left-color: var(--cyan);
+  box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.24), 0 0 16px rgba(0, 240, 255, 0.08);
 }
 
 .tree-item .file-icon {
@@ -403,6 +406,14 @@ body::after {
 
 .tree-item .file-icon.json {
   color: var(--pink);
+}
+
+.tree-item .file-icon.py {
+  color: #7ee787;
+}
+
+.tree-item .file-icon.yml {
+  color: var(--yellow);
 }
 
 .tree-hint {
@@ -426,8 +437,19 @@ body::after {
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  background: #05070d;
+  background: #0d1117;
   position: relative;
+  box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.1), inset 0 0 90px rgba(157, 78, 221, 0.05);
+}
+
+.editor::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid transparent;
+  border-image: linear-gradient(160deg, rgba(0, 240, 255, 0.38), rgba(157, 78, 221, 0.16), rgba(255, 42, 109, 0.1)) 1;
+  z-index: 3;
 }
 
 .editor::after {
@@ -464,11 +486,13 @@ body::after {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 18px 26px 40px;
+  scroll-behavior: smooth;
 }
 
 .code-block {
   margin: 0 0 26px;
   animation: blockIn 0.5s ease both;
+  scroll-margin-top: 12px;
 }
 
 @keyframes blockIn {
@@ -512,7 +536,8 @@ body::after {
 }
 
 .str {
-  color: var(--yellow);
+  color: #7ee787;
+  text-shadow: 0 0 10px rgba(126, 231, 135, 0.18);
 }
 
 .fn {
@@ -1168,5 +1193,216 @@ body::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   内容注入组件：项目卡片 / 笔记列表 / 同步状态
+   ============================================================ */
+.sync-line {
+  margin: 0 0 12px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: #7ee787;
+  background: rgba(126, 231, 135, 0.04);
+  border: 1px solid rgba(126, 231, 135, 0.16);
+  border-left: 2px solid rgba(126, 231, 135, 0.55);
+  border-radius: 2px;
+  letter-spacing: 0.03em;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.sync-line.error {
+  color: var(--pink);
+  background: rgba(255, 42, 109, 0.05);
+  border-color: rgba(255, 42, 109, 0.25);
+  border-left-color: var(--pink);
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.project-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.project-card {
+  position: relative;
+  padding: 13px 15px;
+  background: linear-gradient(145deg, rgba(0, 240, 255, 0.035), rgba(157, 78, 221, 0.025));
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  border-radius: 4px;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+
+.project-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: linear-gradient(var(--cyan), var(--purple));
+  opacity: 0.65;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 240, 255, 0.32);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45), 0 0 18px rgba(0, 240, 255, 0.1);
+}
+
+.project-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.project-index {
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+}
+
+.project-name {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.project-kind {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 9px;
+}
+
+.project-tag {
+  padding: 2px 7px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--cyan);
+  background: rgba(0, 240, 255, 0.06);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.18), inset 0 0 8px rgba(0, 240, 255, 0.05);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.45);
+}
+
+.project-tag:nth-child(2n) {
+  color: var(--pink);
+  background: rgba(255, 42, 109, 0.06);
+  border-color: rgba(255, 42, 109, 0.35);
+  box-shadow: 0 0 8px rgba(255, 42, 109, 0.16), inset 0 0 8px rgba(255, 42, 109, 0.04);
+  text-shadow: 0 0 8px rgba(255, 42, 109, 0.4);
+}
+
+.project-tag:nth-child(3n) {
+  color: var(--purple);
+  background: rgba(157, 78, 221, 0.08);
+  border-color: rgba(157, 78, 221, 0.42);
+  box-shadow: 0 0 8px rgba(157, 78, 221, 0.2), inset 0 0 8px rgba(157, 78, 221, 0.05);
+  text-shadow: 0 0 8px rgba(157, 78, 221, 0.4);
+}
+
+.project-desc {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+.note-list {
+  display: grid;
+  gap: 8px;
+}
+
+.note-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 10px 13px;
+  background: rgba(0, 240, 255, 0.02);
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  border-radius: 4px;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+.note-item:hover {
+  background: rgba(0, 240, 255, 0.05);
+  border-color: rgba(0, 240, 255, 0.26);
+}
+
+.note-item .file-icon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  margin-top: 2px;
+  color: var(--cyan);
+}
+
+.note-body {
+  min-width: 0;
+}
+
+.note-file {
+  font-size: 12.5px;
+  color: var(--cyan);
+  letter-spacing: 0.02em;
+}
+
+.note-body p {
+  margin: 3px 0 0;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--text-soft);
+}
+
+.status-copy {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+}
+
+.status-copy b {
+  color: var(--cyan);
+  font-weight: 500;
+}
+
+@media (max-width: 700px) {
+  .project-list {
+    grid-template-columns: 1fr;
+  }
+
+  .status-copy {
+    font-size: 9.5px;
   }
 }

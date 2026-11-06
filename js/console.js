@@ -9,36 +9,12 @@
 (function () {
   "use strict";
 
-  var GITHUB_USER = "Julian-Yulijin";
-  var GITHUB_URL = "https://github.com/" + GITHUB_USER;
-  var EMAIL = "yulijin118@163.com";
+  var GITHUB_USER = "Julian-yulijin";
 
   /* ----------------------------------------------------------
      预置数据（前端字符串 / 数组，不依赖任何接口）
      ---------------------------------------------------------- */
-  var projects = [
-    {
-      name: "demo-project-1.md",
-      title: "示例项目 1",
-      status: "进行中",
-      stack: "HTML / CSS / JavaScript",
-      path: "/projects/demo-project-1.html"
-    },
-    {
-      name: "demo-project-2.md",
-      title: "示例项目 2",
-      status: "进行中",
-      stack: "Vue / Vite",
-      path: "/projects/demo-project-2.html"
-    },
-    {
-      name: "demo-project-3.md",
-      title: "示例项目 3",
-      status: "进行中",
-      stack: "Canvas / WebGL / GSAP",
-      path: "/projects/demo-project-3.html"
-    }
-  ];
+  var PROJECT_NAMES = ["Lotia", "Agent-Workflow", "Calender", "Nihongo", "Xigai"];
 
   var skillsData = [
     {
@@ -121,60 +97,26 @@
     terminal.scrollTop = terminal.scrollHeight;
   }
 
-  function outputLines(lines) {
-    lines.forEach(function (text) {
-      appendLine(text, "output");
-    });
-  }
-
   function printHelp() {
-    outputLines([
-      "可用指令 ────────────────────────────────",
-      "  help            列出所有指令",
-      "  clear           清空终端屏幕",
-      "  ls projects     列出项目数组",
-      "  cat skills.md   查看前端技术栈",
-      "  contact         查看邮箱与联系方式"
-    ]);
+    appendLine("Available commands: ls projects, cat about, git push, clear", "output");
   }
 
   function printProjects() {
-    outputLines([
-      "PROJECTS/ (" + projects.length + ")",
-      "──────────────────────────────────────────────"
-    ]);
-    projects.forEach(function (p, i) {
-      var index = String(i + 1).padStart(2, "0");
-      appendLine(
-        "  " + index + "  " + p.name + "   [" + p.status + "]   " + p.stack,
-        "output"
-      );
-      appendLine("      -> " + p.path, "muted");
-    });
+    appendLine(PROJECT_NAMES.join("/ ") + "/", "output");
   }
 
-  function printSkills() {
-    outputLines([
-      "# skills.md — frontend stack",
-      "──────────────────────────────────────────────"
-    ]);
-    skillsData.forEach(function (s) {
-      var filled = Math.round(s.level / 10);
-      var bar = "█".repeat(filled) + "░".repeat(10 - filled);
-      appendLine(
-        "  " + s.name.padEnd(14, " ") + " [" + bar + "] " + s.level + "%",
-        "output"
-      );
-    });
+  function printAbout() {
+    appendLine(
+      "Frontend Student. Love coding and exploring AI Agents. Let's build something cool.",
+      "output"
+    );
   }
 
-  function printContact() {
-    outputLines([
-      "CONTACT ──────────────────────────────────────",
-      "  email : " + EMAIL,
-      "  github: " + GITHUB_URL,
-      "  备注  : 学生 / 前端方向 / 欢迎交流与协作"
-    ]);
+  function printGitPush() {
+    appendLine(
+      "Enumerating objects... done. To github.com:Julian-yulijin/achievement.git -> master -> master",
+      "output"
+    );
   }
 
   function runCommand(raw) {
@@ -195,10 +137,10 @@
       terminal.innerHTML = "";
     } else if (normalized === "ls projects") {
       printProjects();
-    } else if (normalized === "cat skills.md") {
-      printSkills();
-    } else if (normalized === "contact") {
-      printContact();
+    } else if (normalized === "cat about") {
+      printAbout();
+    } else if (normalized === "git push") {
+      printGitPush();
     } else {
       appendLine("command not found: " + cmd, "error");
       appendLine("输入 help 查看可用指令。", "muted");
@@ -263,6 +205,7 @@
   var ghProfile = document.getElementById("gh-profile");
   var ghRepos = document.getElementById("gh-repos");
   var ghState = document.getElementById("gh-state");
+  var ghSync = document.getElementById("gh-sync");
 
   function escapeHtml(value) {
     return String(value == null ? "" : value)
@@ -410,6 +353,10 @@
 
   function renderGitHubError(message) {
     ghProfile.classList.remove("skeleton");
+    if (ghSync) {
+      ghSync.classList.add("error");
+      ghSync.textContent = "> " + message + " — network blocked or rate limit reached; retry later.";
+    }
     ghProfile.innerHTML =
       '<div class="gh-loading">[X] GitHub API 暂不可用<br><span class="muted">' +
       escapeHtml(message) +
@@ -438,6 +385,10 @@
 
   function loadGitHub() {
     appendLine("[INFO] fetching data from github api...", "info", true);
+    if (ghSync) {
+      ghSync.classList.remove("error");
+      ghSync.textContent = "> connecting to api.github.com ...";
+    }
 
     var timeout = new Promise(function (_, reject) {
       setTimeout(function () {
@@ -464,6 +415,10 @@
         var repos = results[1];
 
         appendLine("[SUCCESS] 200 OK", "success", true);
+        if (ghSync) {
+          ghSync.classList.remove("error");
+          ghSync.textContent = "> 200 OK - Data synced.";
+        }
         appendLine(
           "[DATA] " +
             user.public_repos +

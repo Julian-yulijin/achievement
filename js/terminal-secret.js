@@ -4,9 +4,13 @@
    ============================================================ */
 (function () {
   var LINES = [
-    { text: '> [SYSTEM] Sudo access granted.', tone: 'sys' },
-    { text: '> [INFO] Loading classified archives...', tone: 'info' },
-    { text: '> [WAITING FOR INPUT] ...', tone: 'wait' }
+    { text: '> [ACCESS GRANTED]', tone: 'sys' },
+    { text: ' ', tone: 'plain' },
+    { text: '2个月前：只会一点 C 语言。', tone: 'plain' },
+    { text: '现在：已完成全栈初探、AI 工具开发与 Git 协作。', tone: 'plain' },
+    { text: ' ', tone: 'plain' },
+    { text: '我没有初始的满级技能包，但我具备极高的迭代频率。', tone: 'plain' },
+    { text: '我的进化速度，会成为团队最可靠的增量。', tone: 'plain' }
   ];
 
   var overlay = null;

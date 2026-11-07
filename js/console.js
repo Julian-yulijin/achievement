@@ -119,6 +119,13 @@
     );
   }
 
+  function printWelcome() {
+    appendLine(
+      "Welcome, Seniors! 很高兴能和大家一起组队，随时准备开工！",
+      "welcome"
+    );
+  }
+
   function runCommand(raw) {
     var cmd = raw.trim();
     if (!cmd) {
@@ -141,6 +148,8 @@
       printAbout();
     } else if (normalized === "git push") {
       printGitPush();
+    } else if (normalized === "hello" || normalized === "team") {
+      printWelcome();
     } else {
       appendLine("command not found: " + cmd, "error");
       appendLine("输入 help 查看可用指令。", "muted");
@@ -190,7 +199,7 @@
   var bootLines = [
     ["[BOOT] frontend console v2.3.0 — static build, zero backend", "info"],
     ["[BOOT] runtime: browser / ES2017 / canvas 2d", "muted"],
-    ["[HINT] 点击终端输入指令，输入 help 开始探索。", "muted"]
+    ["[HINT] 输入 help 查看指令；对了，试着向学长学姐打个招呼。", "muted"]
   ];
 
   bootLines.forEach(function (item, i) {

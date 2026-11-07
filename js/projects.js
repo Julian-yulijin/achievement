@@ -75,7 +75,7 @@ const projectData = {
       },
       {
         path: 'images/projects/agent/02-trae-tools.png',
-        caption: '图 02：利用 Trae 辅助开发的日常工具界面'
+        caption: '图 02：利用 DSH 辅助开发的日常工具界面'
       }
     ]
   },

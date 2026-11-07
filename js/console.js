@@ -102,6 +102,7 @@
     [
       ["help", "show this help"],
       ["ls projects", "list all projects"],
+      ["cd <page>", "go to projects / notes / about"],
       ["cat about", "who am i"],
       ["git push", "simulate a git push"],
       ["clear", "clear the terminal"]
@@ -135,6 +136,30 @@
     );
   }
 
+  function handleCd(rawArg) {
+    var basePath = document.body.getAttribute("data-root") || "/";
+    var arg = rawArg.replace(/^\.?\//, "").replace(/\/+$/, "").toLowerCase();
+
+    if (arg === "" || arg === "~" || arg === "..") {
+      appendLine("cd: return to console...", "info");
+      setTimeout(function () {
+        window.location.href = basePath;
+      }, 360);
+      return;
+    }
+
+    if (arg === "projects" || arg === "notes" || arg === "about") {
+      appendLine("cd: entering /" + arg + "/ ...", "info");
+      setTimeout(function () {
+        window.location.href = basePath + arg + "/";
+      }, 360);
+      return;
+    }
+
+    appendLine("cd: no such directory: " + rawArg, "error");
+    appendLine("     available: projects / notes / about", "muted");
+  }
+
   function runCommand(raw) {
     var cmd = raw.trim();
     if (!cmd) {
@@ -146,6 +171,11 @@
     historyIndex = -1;
 
     var normalized = cmd.replace(/\s+/g, " ").toLowerCase();
+
+    if (normalized === "cd" || normalized.indexOf("cd ") === 0) {
+      handleCd(cmd.replace(/^cd\b\s*/i, "").trim());
+      return;
+    }
 
     if (normalized === "help") {
       printHelp();

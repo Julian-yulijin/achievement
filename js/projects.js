@@ -29,7 +29,8 @@ const projectData = {
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Lotia',
-    demoUrl: null,
+    demoUrl: 'https://julian-yulijin.github.io/Lotia/',
+    qrUrl: 'https://julian-yulijin.github.io/Lotia/',
     images: [
       {
         path: 'images/projects/lotia/01-interface.png',
@@ -66,6 +67,7 @@ const projectData = {
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Agent-Workflow',
     demoUrl: null,
+    qrUrl: null,
     images: [
       {
         path: 'images/projects/agent/01-dsh-console.png',
@@ -101,7 +103,8 @@ const projectData = {
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Calender',
-    demoUrl: null,
+    demoUrl: 'https://julian-yulijin.github.io/calender/',
+    qrUrl: 'https://julian-yulijin.github.io/calender/',
     images: [
       {
         path: 'images/projects/calender/01-ui.png',
@@ -137,7 +140,8 @@ const projectData = {
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Nihongo',
-    demoUrl: null,
+    demoUrl: 'https://julian-yulijin.github.io/nihongo/',
+    qrUrl: 'https://julian-yulijin.github.io/nihongo/',
     images: [
       {
         path: 'images/projects/nihongo/01-practice.png',
@@ -173,7 +177,8 @@ const projectData = {
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Xigai',
-    demoUrl: null,
+    demoUrl: 'https://julian-yulijin.github.io/xigai/',
+    qrUrl: 'https://julian-yulijin.github.io/xigai/',
     images: [
       {
         path: 'images/projects/xigai/01-site.png',
@@ -297,6 +302,16 @@ window.projectData = projectData;
 
   function renderQr(url) {
     qrEl.innerHTML = '';
+
+    const qrBlock = qrEl.closest('.modal-qr');
+
+    if (!url) {
+      if (qrBlock) qrBlock.style.display = 'none';
+      return;
+    }
+
+    if (qrBlock) qrBlock.style.display = '';
+
     if (typeof QRCode === 'undefined') {
       qrEl.textContent = 'QR unavailable';
       return;
@@ -325,14 +340,14 @@ window.projectData = projectData;
     titleEl.textContent = data.title;
     statusEl.textContent = data.status;
     descEl.textContent = data.description;
-    repoUrlEl.textContent = data.repoUrl;
+    repoUrlEl.textContent = data.qrUrl || data.repoUrl;
     copyBtn.textContent = 'COPY URL';
 
     renderStack(data.stack);
     renderLinks(data);
     renderExperience(data.experience);
     renderGallery(data);
-    renderQr(data.repoUrl);
+    renderQr(data.qrUrl);
 
     panel.scrollTop = 0;
     modal.classList.add('open');

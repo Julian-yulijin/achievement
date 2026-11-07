@@ -128,6 +128,36 @@
         </div>
       </aside>
     </div>
+
+    <section class="agent-sandbox" id="agent-sandbox" hidden aria-label="Interactive Agent Sandbox">
+      <div class="sandbox-head">
+        <span class="sandbox-kicker">INTERACTIVE AGENT SANDBOX</span>
+        <span class="sandbox-meta">PURE FRONTEND MOCK · NO BACKEND</span>
+      </div>
+
+      <div class="sandbox-body">
+        <div class="sandbox-editor">
+          <div class="sandbox-pane-head">
+            <span>INPUT / question-bank.md</span>
+            <span class="sandbox-state" id="sandbox-status">IDLE</span>
+          </div>
+          <pre class="sandbox-code" id="sandbox-code"></pre>
+        </div>
+
+        <div class="sandbox-controls">
+          <button class="sandbox-run" type="button" id="sandbox-run">[ ▶ RUN DSH AGENT ]</button>
+          <span class="sandbox-hint">(Mock Test)</span>
+        </div>
+
+        <div class="sandbox-terminal">
+          <div class="sandbox-pane-head">
+            <span>OUTPUT / dsh agent</span>
+            <span class="sandbox-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+          </div>
+          <div class="sandbox-log" id="sandbox-log"></div>
+        </div>
+      </div>
+    </section>
   </article>
 </div>
 

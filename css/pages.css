@@ -1294,6 +1294,305 @@ body.modal-open {
   color: #fff;
 }
 
+/* ---------- Agent Sandbox ---------- */
+.agent-sandbox {
+  margin: 0 clamp(20px, 4vw, 48px) 48px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(4, 6, 10, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.03);
+}
+
+.agent-sandbox[hidden] {
+  display: none;
+}
+
+.sandbox-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(0, 240, 255, 0.05), rgba(0, 240, 255, 0));
+}
+
+.sandbox-kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--cyan);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.sandbox-meta {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.sandbox-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 168px minmax(0, 1fr);
+}
+
+.sandbox-editor,
+.sandbox-terminal {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sandbox-terminal {
+  border-left: 1px solid var(--line);
+}
+
+.sandbox-pane-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.sandbox-state {
+  margin-left: auto;
+  font-size: 9px;
+  color: var(--cyan);
+}
+
+.sandbox-lights {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.sandbox-lights i {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2f7a55;
+}
+
+.sandbox-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 16px 12px;
+  border-left: 1px solid var(--line);
+  background: rgba(0, 240, 255, 0.025);
+}
+
+.sandbox-run {
+  width: 100%;
+  padding: 11px 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+  color: var(--cyan);
+  background: rgba(0, 240, 255, 0.07);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 3px;
+  box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.06);
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, box-shadow 0.18s, color 0.18s;
+}
+
+.sandbox-run:hover:not(:disabled) {
+  background: rgba(0, 240, 255, 0.14);
+  border-color: var(--cyan);
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.28), inset 0 0 20px rgba(0, 240, 255, 0.1);
+}
+
+.sandbox-run:disabled {
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+  cursor: progress;
+}
+
+.sandbox-hint {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+}
+
+.sandbox-code {
+  position: relative;
+  flex: 1;
+  min-height: 188px;
+  margin: 0;
+  padding: 12px 0;
+  overflow: auto;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 2;
+  color: #c9d6e6;
+  background: #090b11;
+  white-space: pre-wrap;
+}
+
+.sandbox-code.reading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  box-shadow: 0 0 14px var(--cyan);
+  animation: sandboxScan 1.2s linear infinite;
+}
+
+@keyframes sandboxScan {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  88% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(176px);
+    opacity: 0;
+  }
+}
+
+.sandbox-line {
+  display: flex;
+  gap: 10px;
+  padding: 1px 14px 1px 8px;
+}
+
+.sandbox-ln {
+  flex: 0 0 16px;
+  text-align: right;
+  color: #3c4d60;
+  user-select: none;
+}
+
+.sandbox-code-text {
+  min-width: 0;
+}
+
+.sandbox-line.broken {
+  color: #f2b8c6;
+  background: rgba(255, 42, 109, 0.075);
+  box-shadow: inset 2px 0 0 rgba(255, 42, 109, 0.5);
+}
+
+.sandbox-line.fixed {
+  color: #c9ffe4;
+  background: rgba(61, 220, 151, 0.075);
+  box-shadow: inset 2px 0 0 rgba(61, 220, 151, 0.5);
+  animation: sandboxFix 0.6s ease both;
+}
+
+@keyframes sandboxFix {
+  from {
+    opacity: 0.35;
+    transform: translateX(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sandbox-code.flash-fixed {
+  animation: sandboxFlash 0.9s ease;
+}
+
+@keyframes sandboxFlash {
+  0% {
+    box-shadow: inset 0 0 0 1px rgba(61, 220, 151, 0.35);
+  }
+
+  100% {
+    box-shadow: inset 0 0 0 1px rgba(61, 220, 151, 0);
+  }
+}
+
+.sandbox-log {
+  flex: 1;
+  min-height: 188px;
+  max-height: 260px;
+  padding: 10px 12px 14px;
+  overflow-y: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.9;
+  color: #63f0a6;
+  background: #040705;
+}
+
+.sandbox-log:empty::before {
+  content: "[IDLE] waiting for agent...";
+  color: #2f5f47;
+}
+
+.sandbox-log-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.log-tag {
+  margin-right: 8px;
+  color: #3ddc97;
+}
+
+.log-body {
+  color: #86f2b8;
+}
+
+.level-warn .log-tag {
+  color: var(--yellow);
+}
+
+.level-warn .log-body {
+  color: #f3e97a;
+}
+
+.level-agent .log-tag {
+  color: #c88bff;
+}
+
+.level-success .log-tag,
+.level-success .log-body {
+  color: #3ddc97;
+  text-shadow: 0 0 10px rgba(61, 220, 151, 0.35);
+}
+
+.level-system .log-tag {
+  color: var(--cyan);
+}
+
+.level-system .log-body {
+  color: #9ff7ff;
+}
+
 /* ---------- 动效 ---------- */
 @keyframes spin {
   to {
@@ -1396,6 +1695,31 @@ body.modal-open {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .sandbox-body {
+    grid-template-columns: 1fr;
+  }
+
+  .sandbox-controls {
+    flex-direction: row;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sandbox-run {
+    width: auto;
+  }
+
+  .sandbox-terminal {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .sandbox-code,
+  .sandbox-log {
+    min-height: 160px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1497,6 +1821,14 @@ body.modal-open {
 
   .modal-qr {
     flex-direction: column;
+  }
+
+  .agent-sandbox {
+    margin: 0 16px 28px;
+  }
+
+  .sandbox-meta {
+    display: none;
   }
 }
 

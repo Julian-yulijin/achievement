@@ -65,9 +65,10 @@ const projectData = {
         text: '不再满足于单一工具的编写，为了实现对电脑的深度管理和复杂任务的智能调度，主动学习并亲手配置了 DSH 环境，完成了从传统开发者向 Agent 编排者视角的转变。'
       }
     ],
-    repoUrl: 'https://github.com/Julian-Yulijin/Agent-Workflow',
+    repoUrl: null,
     demoUrl: null,
     qrUrl: null,
+    sandbox: true,
     images: [
       {
         path: 'images/projects/agent/01-dsh-console.png',
@@ -231,13 +232,15 @@ window.projectData = projectData;
   function renderLinks(data) {
     linksEl.innerHTML = '';
 
-    const repo = document.createElement('a');
-    repo.href = data.repoUrl;
-    repo.target = '_blank';
-    repo.rel = 'noopener noreferrer';
-    repo.className = 'modal-link';
-    repo.textContent = 'REPOSITORY ↗';
-    linksEl.appendChild(repo);
+    if (data.repoUrl) {
+      const repo = document.createElement('a');
+      repo.href = data.repoUrl;
+      repo.target = '_blank';
+      repo.rel = 'noopener noreferrer';
+      repo.className = 'modal-link';
+      repo.textContent = 'REPOSITORY ↗';
+      linksEl.appendChild(repo);
+    }
 
     if (data.demoUrl) {
       const demo = document.createElement('a');
@@ -327,6 +330,161 @@ window.projectData = projectData;
     });
   }
 
+  const sandboxEl = document.getElementById('agent-sandbox');
+  const sandboxCode = document.getElementById('sandbox-code');
+  const sandboxLog = document.getElementById('sandbox-log');
+  const sandboxRun = document.getElementById('sandbox-run');
+  const sandboxStatus = document.getElementById('sandbox-status');
+
+  const SANDBOX_BROKEN = [
+    '题目：求矩阵 A 的秩。',
+    '',
+    '公式：\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix} (这里故意缺少闭合符号或错误语法)'
+  ];
+
+  const SANDBOX_FIXED = [
+    '题目：求矩阵 A 的秩。',
+    '',
+    '公式：\\(\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}\\) (已被 AI 修复)'
+  ];
+
+  const SANDBOX_LOGS = [
+    ['INFO', 'Reading markdown file...'],
+    ['INFO', 'Executing formula_slice.py...'],
+    ['WARN', 'Detected broken LaTeX syntax in line 3.'],
+    ['AGENT', 'Sending chunk to DeepSeek Harness...'],
+    ['SUCCESS', 'Formula fixed by AI!'],
+    ['INFO', 'Merging output...'],
+    ['SYSTEM', 'Process completed. 0 errors.']
+  ];
+
+  let sandboxTimers = [];
+  let sandboxRunning = false;
+
+  function clearSandboxTimers() {
+    sandboxTimers.forEach(function (id) {
+      clearTimeout(id);
+    });
+    sandboxTimers = [];
+  }
+
+  function later(fn, delay) {
+    sandboxTimers.push(setTimeout(fn, delay));
+  }
+
+  function scrollSandboxLog() {
+    sandboxLog.scrollTop = sandboxLog.scrollHeight;
+  }
+
+  function renderSandboxCode(lines, state) {
+    sandboxCode.innerHTML = '';
+
+    lines.forEach(function (line, index) {
+      const row = document.createElement('div');
+      row.className = 'sandbox-line';
+
+      const lineNo = document.createElement('span');
+      lineNo.className = 'sandbox-ln';
+      lineNo.textContent = String(index + 1).padStart(2, '0');
+
+      const text = document.createElement('span');
+      text.className = 'sandbox-code-text';
+      text.textContent = line || ' ';
+
+      if (index === 2) {
+        row.classList.add(state === 'fixed' ? 'fixed' : 'broken');
+      }
+
+      row.appendChild(lineNo);
+      row.appendChild(text);
+      sandboxCode.appendChild(row);
+    });
+  }
+
+  function resetSandbox() {
+    clearSandboxTimers();
+    sandboxRunning = false;
+    sandboxCode.classList.remove('reading', 'flash-fixed');
+    sandboxLog.innerHTML = '';
+    sandboxStatus.textContent = 'IDLE';
+    sandboxRun.disabled = false;
+    sandboxRun.textContent = '[ ▶ RUN DSH AGENT ]';
+    renderSandboxCode(SANDBOX_BROKEN, 'broken');
+  }
+
+  function finishSandbox() {
+    sandboxRunning = false;
+    sandboxCode.classList.remove('reading');
+    sandboxCode.classList.add('flash-fixed');
+    renderSandboxCode(SANDBOX_FIXED, 'fixed');
+    sandboxStatus.textContent = 'FIXED';
+    sandboxRun.disabled = false;
+    sandboxRun.textContent = '[ ▶ RUN AGAIN ]';
+
+    later(function () {
+      sandboxCode.classList.remove('flash-fixed');
+    }, 900);
+  }
+
+  function runSandbox() {
+    if (sandboxRunning) return;
+
+    clearSandboxTimers();
+    sandboxRunning = true;
+    renderSandboxCode(SANDBOX_BROKEN, 'broken');
+    sandboxLog.innerHTML = '';
+    sandboxCode.classList.remove('flash-fixed');
+    sandboxCode.classList.add('reading');
+    sandboxStatus.textContent = 'READING';
+    sandboxRun.disabled = true;
+    sandboxRun.textContent = '[ RUNNING... ]';
+
+    let logIndex = 0;
+
+    function printNextLine() {
+      if (logIndex >= SANDBOX_LOGS.length) {
+        later(finishSandbox, 320);
+        return;
+      }
+
+      const entry = SANDBOX_LOGS[logIndex++];
+      const line = document.createElement('div');
+      line.className = 'sandbox-log-line level-' + entry[0].toLowerCase();
+
+      const tag = document.createElement('span');
+      tag.className = 'log-tag';
+      tag.textContent = '[' + entry[0] + ']';
+
+      const body = document.createElement('span');
+      body.className = 'log-body';
+
+      line.appendChild(tag);
+      line.appendChild(body);
+      sandboxLog.appendChild(line);
+      scrollSandboxLog();
+
+      let charIndex = 0;
+
+      function typeChar() {
+        if (charIndex >= entry[1].length) {
+          later(printNextLine, 280);
+          return;
+        }
+        body.textContent += entry[1].charAt(charIndex++);
+        scrollSandboxLog();
+        later(typeChar, 12);
+      }
+
+      later(typeChar, 0);
+    }
+
+    later(printNextLine, 420);
+  }
+
+  if (sandboxRun) {
+    sandboxRun.addEventListener('click', runSandbox);
+  }
+
   function openProject(id) {
     const data = projectData[id];
     if (!data) return;
@@ -340,7 +498,7 @@ window.projectData = projectData;
     titleEl.textContent = data.title;
     statusEl.textContent = data.status;
     descEl.textContent = data.description;
-    repoUrlEl.textContent = data.qrUrl || data.repoUrl;
+    repoUrlEl.textContent = data.qrUrl || data.repoUrl || '';
     copyBtn.textContent = 'COPY URL';
 
     renderStack(data.stack);
@@ -348,6 +506,15 @@ window.projectData = projectData;
     renderExperience(data.experience);
     renderGallery(data);
     renderQr(data.qrUrl);
+
+    if (data.sandbox) {
+      sandboxEl.hidden = false;
+      resetSandbox();
+    } else {
+      sandboxEl.hidden = true;
+      clearSandboxTimers();
+      sandboxRunning = false;
+    }
 
     panel.scrollTop = 0;
     modal.classList.add('open');
@@ -363,6 +530,8 @@ window.projectData = projectData;
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('modal-open');
+    clearSandboxTimers();
+    sandboxRunning = false;
 
     if (lastFocused && typeof lastFocused.focus === 'function') {
       lastFocused.focus();

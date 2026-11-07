@@ -331,20 +331,19 @@
   }
 
   function renderRepos(repos) {
-    var recent = repos
-      .slice()
-      .sort(function (a, b) {
-        return new Date(b.pushed_at) - new Date(a.pushed_at);
-      })
-      .slice(0, 3);
+    if (!ghRepos) return;
 
-    if (!recent.length) {
+    var sorted = repos.slice().sort(function (a, b) {
+      return new Date(b.pushed_at) - new Date(a.pushed_at);
+    });
+
+    if (!sorted.length) {
       ghRepos.innerHTML =
         '<div class="repo-placeholder">该账号暂无公开仓库。</div>';
       return;
     }
 
-    ghRepos.innerHTML = recent
+    ghRepos.innerHTML = sorted
       .map(function (repo) {
         var lang = repo.language || "Unknown";
         return (
@@ -376,27 +375,30 @@
       .join("");
   }
 
-  function renderGitHubError(message) {
-    ghProfile.classList.remove("skeleton");
+  function renderGitHubError() {
+    if (ghProfile) ghProfile.classList.remove("skeleton");
+    var offline =
+      "[OFFLINE] GitHub API 暂不可用，请直接访问 github.com/Julian-Yulijin";
     if (ghSync) {
       ghSync.classList.add("error");
-      ghSync.textContent = "> " + message + " — network blocked or rate limit reached; retry later.";
+      ghSync.textContent = offline;
     }
-    ghProfile.innerHTML =
-      '<div class="gh-loading">[X] GitHub API 暂不可用<br><span class="muted">' +
-      escapeHtml(message) +
-      "</span></div>";
-    ghRepos.innerHTML =
-      '<div class="repo-placeholder">无法获取仓库列表。可能是未认证请求触发了 GitHub API 速率限制（60 次/小时），请稍后刷新。</div>';
+    if (ghProfile) {
+      ghProfile.innerHTML =
+        '<div class="gh-loading">[OFFLINE] GitHub API 暂不可用，请直接访问 ' +
+        '<a href="https://github.com/Julian-Yulijin" target="_blank" rel="noopener noreferrer">github.com/Julian-Yulijin</a></div>';
+    }
+    if (ghRepos) {
+      ghRepos.innerHTML = "";
+    }
     setGitHubStatus(false);
-    appendLine("[ERROR] " + message, "error", true);
-    appendLine("[HINT] 未认证的 GitHub API 有速率限制，稍后自动恢复。", "warn", true);
   }
 
   function getJSON(url) {
     return fetch(url, {
       headers: {
-        Accept: "application/vnd.github+json"
+        Accept: "application/vnd.github+json",
+        "User-Agent": "Julian-Yulijin-Portfolio"
       }
     }).then(function (res) {
       if (!res.ok) {
@@ -458,8 +460,8 @@
         renderRepos(repos);
         setGitHubStatus(true);
       })
-      .catch(function (err) {
-        renderGitHubError(err && err.message ? err.message : "unknown error");
+      .catch(function () {
+        renderGitHubError();
       });
   }
 
@@ -746,5 +748,7 @@
   /* ----------------------------------------------------------
      启动
      ---------------------------------------------------------- */
-  loadGitHub();
+  if (ghProfile && ghRepos) {
+    loadGitHub();
+  }
 })();

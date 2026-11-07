@@ -88,6 +88,14 @@
     }, delay || 0);
   }
 
+  function showCenterHTML(html, extraClass, delay) {
+    center.innerHTML = html;
+    center.className = 'fx-center' + (extraClass ? ' ' + extraClass : '');
+    later(function () {
+      center.classList.add('show');
+    }, delay || 0);
+  }
+
   function startClock() {
     function tick() {
       var d = new Date();
@@ -146,6 +154,7 @@
     });
     removeFloodLines();
     stopRain();
+    stopTopo();
     if (clockTimer) {
       clearInterval(clockTimer);
       clockTimer = null;
@@ -185,10 +194,9 @@
   function drawFrontend(time, started) {
     var t = (time - started) / 1000;
 
-    ctx.fillStyle = 'rgba(3, 6, 11, 0.22)';
-    ctx.fillRect(0, 0, W, H);
+    ctx.clearRect(0, 0, W, H);
 
-    var cx = Math.min(W * 0.26, 460);
+    var cx = Math.min(W * 0.255, 430);
     var cy = H * 0.52;
     var R = Math.min(W * 0.2, H * 0.33, 290);
 
@@ -251,47 +259,74 @@
 
     ctx.restore();
 
-    var colors = ['#00f0ff', '#ff2a6d', '#fcee0a'];
-    var rows = [0.27, 0.51, 0.75];
-    var x0 = W * 0.5;
-    var x1 = W * 0.94;
+    var waves = [
+      { rgb: '0, 240, 255', line: 'rgba(0, 240, 255, 0.85)', y: 0.26, label: 'CH 01 // LATENCY' },
+      { rgb: '124, 118, 255', line: 'rgba(140, 132, 255, 0.8)', y: 0.5, label: 'CH 02 // THROUGHPUT' },
+      { rgb: '61, 220, 151', line: 'rgba(61, 220, 151, 0.8)', y: 0.74, label: 'CH 03 // RENDER' }
+    ];
+    var x0 = W * 0.47;
+    var x1 = W * 0.93;
 
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-    for (var gx = x0; gx <= x1; gx += 46) {
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.035)';
+    ctx.lineWidth = 1;
+    for (var gx = x0; gx <= x1; gx += 48) {
       ctx.beginPath();
-      ctx.moveTo(gx, H * 0.16);
-      ctx.lineTo(gx, H * 0.87);
+      ctx.moveTo(gx, H * 0.15);
+      ctx.lineTo(gx, H * 0.86);
       ctx.stroke();
     }
 
-    rows.forEach(function (row, idx) {
-      var baseY = H * row;
-      var amp = H * 0.072;
-      var speed = 2 + idx * 0.9;
+    ctx.font = "9px 'JetBrains Mono', Consolas, monospace";
 
-      ctx.beginPath();
+    waves.forEach(function (wave, idx) {
+      var baseY = H * wave.y;
+      var amp = H * 0.055;
+      var speed = t * (1.1 + idx * 0.22);
+      var pts = [];
+
       for (var x = x0; x <= x1; x += 2) {
         var p = (x - x0) / (x1 - x0);
-        var envelope = 0.35 + 0.65 * Math.abs(Math.sin(t * 1.4 + idx * 0.9));
-        var y = baseY + Math.sin(p * Math.PI * 7 + t * speed) * amp * envelope;
-        if (x === x0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
+        var env = 0.35 + 0.65 * Math.abs(Math.sin(t * 0.9 + idx * 1.3));
+        var y = baseY
+          + Math.sin(p * Math.PI * 8 + speed * 2.1) * amp * env
+          + Math.sin(p * Math.PI * 19 - speed * 3.2) * amp * 0.16;
+        pts.push({ x: x, y: y });
       }
-      ctx.strokeStyle = colors[idx];
-      ctx.lineWidth = 1.4;
-      ctx.globalAlpha = 0.65;
-      ctx.shadowColor = colors[idx];
+
+      var grad = ctx.createLinearGradient(0, baseY - amp * 1.9, 0, baseY + amp * 1.2);
+      grad.addColorStop(0, 'rgba(' + wave.rgb + ', 0.2)');
+      grad.addColorStop(0.68, 'rgba(' + wave.rgb + ', 0.045)');
+      grad.addColorStop(1, 'rgba(' + wave.rgb + ', 0)');
+
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, baseY);
+      for (var f = 0; f < pts.length; f += 1) {
+        ctx.lineTo(pts[f].x, pts[f].y);
+      }
+      ctx.lineTo(pts[pts.length - 1].x, baseY);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (var s = 1; s < pts.length; s += 1) {
+        ctx.lineTo(pts[s].x, pts[s].y);
+      }
+      ctx.strokeStyle = wave.line;
+      ctx.lineWidth = 1.1;
+      ctx.shadowColor = wave.line;
       ctx.shadowBlur = 12;
       ctx.stroke();
-      ctx.globalAlpha = 1;
       ctx.shadowBlur = 0;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.24)';
+      ctx.fillText(wave.label, x0, baseY - amp * 2.2);
     });
 
-    ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
-    ctx.strokeRect(W * 0.47, H * 0.12, W * 0.5, H * 0.76);
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.06)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(W * 0.45, H * 0.12, W * 0.5, H * 0.76);
   }
 
   function startFrontend() {
@@ -311,87 +346,143 @@
   }
 
   /* ---------- 02 / 网络节点拓扑 ---------- */
-  var nodes = [];
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var topo = null;
+  var MAX_LINKS = 170;
 
-  function initNodes() {
-    nodes = [];
-    var count = Math.min(90, Math.max(45, Math.floor((W * H) / 18000)));
-    for (var n = 0; n < count; n += 1) {
-      nodes.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.9,
-        vy: (Math.random() - 0.5) * 0.9,
-        r: 1.4 + Math.random() * 2.2,
-        hue: Math.random() > 0.72 ? 'pink' : 'cyan'
-      });
+  function stopTopo() {
+    if (topo && topo.root && topo.root.parentNode) {
+      topo.root.parentNode.removeChild(topo.root);
     }
+    topo = null;
   }
 
-  function drawBackend(time, started) {
-    var t = (time - started) / 1000;
+  function buildTopo() {
+    stopTopo();
 
-    ctx.fillStyle = 'rgba(3, 5, 11, 0.24)';
-    ctx.fillRect(0, 0, W, H);
+    var count = Math.min(62, Math.max(34, Math.floor((W * H) / 30000)));
+    var root = document.createElement('div');
+    root.className = 'fx-topo';
 
-    var linkDist = Math.min(W, H) * 0.19;
+    var svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'fx-topo-links');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('preserveAspectRatio', 'none');
+
+    var defs = document.createElementNS(SVG_NS, 'defs');
+    var grad = document.createElementNS(SVG_NS, 'linearGradient');
+    grad.setAttribute('id', 'fxLinkGrad');
+    grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+    grad.setAttribute('x1', '0');
+    grad.setAttribute('y1', '0');
+    grad.setAttribute('x2', String(W));
+    grad.setAttribute('y2', String(H));
+
+    [
+      ['0', '0'],
+      ['0.5', '0.42'],
+      ['1', '0']
+    ].forEach(function (stop) {
+      var node = document.createElementNS(SVG_NS, 'stop');
+      node.setAttribute('offset', stop[0]);
+      node.setAttribute('stop-color', '#00f0ff');
+      node.setAttribute('stop-opacity', stop[1]);
+      grad.appendChild(node);
+    });
+
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+
+    var lineLayer = document.createElementNS(SVG_NS, 'g');
+    svg.appendChild(lineLayer);
+    root.appendChild(svg);
+
+    var nodeData = [];
+    for (var n = 0; n < count; n += 1) {
+      var el = document.createElement('div');
+      el.className = 'fx-node';
+      el.style.animationDuration = (2.6 + Math.random() * 2.2).toFixed(2) + 's';
+      el.style.animationDelay = (-Math.random() * 3).toFixed(2) + 's';
+      root.appendChild(el);
+      nodeData.push({
+        el: el,
+        x: 8 + Math.random() * Math.max(1, W - 16),
+        y: 8 + Math.random() * Math.max(1, H - 16),
+        vx: (Math.random() - 0.5) * 0.55,
+        vy: (Math.random() - 0.5) * 0.55
+      });
+    }
+
+    stage.appendChild(root);
+    topo = { root: root, nodes: nodeData, lines: [], layer: lineLayer };
+  }
+
+  function updateTopo(t) {
+    if (!topo) return;
+
+    var nodes = topo.nodes;
+    var linkDist = Math.min(W, H) * 0.2;
+    var li = 0;
 
     nodes.forEach(function (node) {
       node.x += node.vx;
       node.y += node.vy;
-      if (node.x < 0 || node.x > W) node.vx *= -1;
-      if (node.y < 0 || node.y > H) node.vy *= -1;
+      if (node.x < 8 || node.x > W - 8) node.vx *= -1;
+      if (node.y < 8 || node.y > H - 8) node.vy *= -1;
+      node.el.style.transform = 'translate3d(' + node.x.toFixed(1) + 'px,' + node.y.toFixed(1) + 'px,0)';
     });
 
-    for (var a = 0; a < nodes.length; a += 1) {
-      for (var b = a + 1; b < nodes.length; b += 1) {
+    for (var a = 0; a < nodes.length && li < MAX_LINKS; a += 1) {
+      for (var b = a + 1; b < nodes.length && li < MAX_LINKS; b += 1) {
         var dx = nodes[a].x - nodes[b].x;
         var dy = nodes[a].y - nodes[b].y;
         var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < linkDist) {
-          var alpha = (1 - dist / linkDist) * 0.42;
-          ctx.beginPath();
-          ctx.moveTo(nodes[a].x, nodes[a].y);
-          ctx.lineTo(nodes[b].x, nodes[b].y);
-          ctx.strokeStyle = nodes[a].hue === 'pink' ? 'rgba(255, 42, 109, ' + alpha + ')' : 'rgba(0, 240, 255, ' + alpha + ')';
-          ctx.lineWidth = 0.8;
-          ctx.stroke();
+        if (dist >= linkDist) continue;
+
+        var line = topo.lines[li];
+        if (!line) {
+          line = document.createElementNS(SVG_NS, 'line');
+          line.setAttribute('stroke', 'url(#fxLinkGrad)');
+          line.setAttribute('stroke-width', '0.85');
+          line.setAttribute('stroke-linecap', 'round');
+          topo.layer.appendChild(line);
+          topo.lines.push(line);
         }
+
+        line.setAttribute('x1', nodes[a].x.toFixed(1));
+        line.setAttribute('y1', nodes[a].y.toFixed(1));
+        line.setAttribute('x2', nodes[b].x.toFixed(1));
+        line.setAttribute('y2', nodes[b].y.toFixed(1));
+
+        var breath = 0.55 + 0.45 * Math.sin(t * 0.9 + (a + b) * 0.12);
+        line.setAttribute('stroke-opacity', ((1 - dist / linkDist) * 0.42 * breath).toFixed(3));
+        line.style.display = '';
+        li += 1;
       }
     }
 
-    nodes.forEach(function (node, idx) {
-      var pulse = 0.65 + 0.35 * Math.sin(t * 2 + idx);
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, node.r * pulse, 0, Math.PI * 2);
-      ctx.fillStyle = node.hue === 'pink' ? 'rgba(255, 42, 109, 0.85)' : 'rgba(0, 240, 255, 0.85)';
-      ctx.shadowColor = node.hue === 'pink' ? '#ff2a6d' : '#00f0ff';
-      ctx.shadowBlur = 12;
-      ctx.fill();
-    });
-    ctx.shadowBlur = 0;
-
-    var pulseR = ((t * 260) % (Math.max(W, H) * 0.55));
-    var pulseAlpha = 0.28 * (1 - pulseR / (Math.max(W, H) * 0.55));
-    ctx.beginPath();
-    ctx.arc(W / 2, H / 2, pulseR, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(0, 240, 255, ' + pulseAlpha + ')';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    for (var m = li; m < topo.lines.length; m += 1) {
+      topo.lines[m].style.display = 'none';
+    }
   }
 
   function startBackend() {
     active = 'backend';
     body.classList.add('fx-active', 'fx-backend');
-    openLayer('mode-backend', 'radial-gradient(circle at 50% 50%, rgba(0, 20, 34, 0.94), rgba(2, 5, 10, 0.97))');
-    showCenter('[DATA SYNC] API & Web Environment Online.', '', 500);
+    openLayer('mode-backend', 'radial-gradient(ellipse at 50% 48%, rgba(2, 20, 30, 0.82), rgba(2, 6, 10, 0.93))');
+    showCenterHTML(
+      '<span class="fx-title-xl">[DATA SYNC]</span>' +
+      '<span class="fx-sub">API &amp; Web Environment Online.</span>',
+      'fx-split',
+      500
+    );
     sizeCanvas();
-    initNodes();
+    buildTopo();
 
     var started = 0;
     startLoop(function (time) {
       if (!started) started = time;
-      drawBackend(time, started);
+      updateTopo((time - started) / 1000);
     });
 
     later(stopFx, 5400);
@@ -401,11 +492,17 @@
   function startDevtools() {
     active = 'devtools';
     body.classList.add('fx-active', 'fx-devtools', 'fx-tree-flicker');
-    openLayer('mode-devtools', 'rgba(3, 8, 12, 0.56)');
+    openLayer('mode-devtools', 'rgba(3, 8, 12, 0.38)');
 
     later(function () {
       body.classList.remove('fx-tree-flicker');
-      showCenter('Environment Verified: VSCode, Git, PowerShell, Trae.', 'fx-plain', 0);
+      showCenterHTML(
+        '<span class="fx-title-xl">Environment Verified</span>' +
+        '<span class="fx-sub">VSCODE · GIT · POWERSHELL · TRAE</span>' +
+        '<span class="fx-sub">SIGNATURE MATCHED // 4 / 4 MODULES NOMINAL</span>',
+        'fx-split',
+        0
+      );
     }, 2200);
 
     later(stopFx, 4600);
@@ -415,7 +512,7 @@
   function startRain() {
     rainCanvas = document.createElement('canvas');
     rainCanvas.className = 'fx-rain';
-    body.appendChild(rainCanvas);
+    layer.appendChild(rainCanvas);
     rainCtx = rainCanvas.getContext('2d');
 
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -517,7 +614,12 @@
     active = 'agent';
     body.classList.add('fx-active', 'fx-agent');
     openLayer('mode-agent', 'transparent');
-    showCenter('[DSH AGENT ACTIVATED]', 'fx-agent-title', 100);
+    showCenterHTML(
+      '<span class="fx-title-xl">[DSH AGENT ACTIVATED]</span>' +
+      '<span class="fx-sub">LOCAL HARNESS // SESSION ONLINE</span>',
+      'fx-split fx-agent-block',
+      100
+    );
     sizeCanvas();
     startRain();
     startFlood();
@@ -536,7 +638,7 @@
   function startDeploy() {
     active = 'deploy';
     body.classList.add('fx-active', 'fx-deploy');
-    openLayer('mode-deploy', 'radial-gradient(circle at 50% 50%, rgba(120, 0, 18, 0.94), rgba(24, 0, 6, 0.98))');
+    openLayer('mode-deploy', 'radial-gradient(ellipse at 50% 46%, rgba(38, 4, 16, 0.74), rgba(6, 6, 9, 0.94))');
 
     stage.innerHTML = [
       '<div class="fx-deploy-panel">',
@@ -625,8 +727,10 @@
   }, true);
 
   window.addEventListener('resize', function () {
-    if (active === 'frontend' || active === 'backend') {
-      sizeCanvas();
+    if (!active) return;
+    sizeCanvas();
+    if (active === 'backend') {
+      buildTopo();
     }
   });
 })();

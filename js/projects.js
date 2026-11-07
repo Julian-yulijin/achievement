@@ -12,59 +12,69 @@ const projectData = {
     status: 'IN PROGRESS',
     accent: '#00f0ff',
     accentSoft: 'rgba(0, 240, 255, 0.16)',
-    description: '全栈 Web 应用。从纯前端起步，跑通前后端通信与用户注册登录，并在探索 Cloudflare 边缘方案。',
-    stack: ['HTML/CSS', 'JavaScript', 'Node.js', 'Cloudflare'],
+    description: '从纯前端起步的全栈初探项目。在 AI 的全程指导下，完成了页面搭建、后端初步构建，并跑通了用户注册登录与前后端通信。',
+    stack: ['HTML/CSS', 'JavaScript', 'Node.js', 'REST API'],
     experience: [
       {
-        label: '工作经历',
-        text: '独立完成从页面到接口的完整链路：前端表单校验、注册登录、会话保持，以及部署与边缘网络方案的尝试。'
+        label: '学习成果与实践',
+        text: '在 AI 辅助下，我完成了从纯静态页面到全栈应用的跨越：\n  1. 学习了 HTML/CSS/JS 的前端搭建方式。\n  2. 成功跑通了前后端通信，实现了注册与登录。\n  3. 深入了解了后端的 API 接口设计、Web 运行环境等具体核心概念。'
       },
       {
-        label: '踩坑 01',
-        text: '问题：前后端字段命名与校验规则不一致。解决：先约定接口 schema，再用统一的请求封装与错误处理兜底。'
+        label: '踩坑 01：跨越纯前端到后端的认知壁垒',
+        text: '问题：起初对服务器和接口的概念十分模糊，不知道数据如何流转。解决：在 AI 的引导下，通过实际动手写请求，终于弄懂了什么是 Request/Response，理清了 Web 环境的运作机制。'
       },
       {
-        label: '踩坑 02',
-        text: '问题：登录态在跨域调试时丢失。解决：明确 CORS 与 Cookie 配置，区分本地和生产环境的域名策略。'
+        label: '踩坑 02：利用 AI 工具排查报错',
+        text: '问题：在本地调试时遇到环境配置和跨域网络报错，难以独立定位。解决：学会将报错信息喂给 AI，并按照指导一步步排查，学会了如何高效利用 Prompt 驱动 AI 辅助开发。'
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Lotia',
     demoUrl: null,
     images: [
-      'images/projects/lotia/01-overview.png',
-      'images/projects/lotia/02-auth.png',
-      'images/projects/lotia/03-architecture.png'
+      {
+        path: 'images/projects/lotia/01-interface.png',
+        caption: '图 01：Lotia 界面效果'
+      },
+      {
+        path: 'images/projects/lotia/02-debug.png',
+        caption: '图 02：前后端交互调试截图'
+      }
     ]
   },
 
   agent: {
     kicker: 'PROJECT 02 / AUTOMATION',
     title: 'Agent-Workflow',
-    status: 'EXPERIMENTAL',
+    status: 'ACTIVE',
     accent: '#ff2a6d',
     accentSoft: 'rgba(255, 42, 109, 0.16)',
-    description: '基于 DeepSeek Harness 的本地自动化引擎，用 Python 处理复杂 LaTeX 公式并排版题库。',
-    stack: ['Python', 'DeepSeek Harness', 'LaTeX', 'Shell'],
+    description: '从使用 AI 辅助编程，到开发日常提效工具，最终为了更智能地管理电脑，亲手配置并落地了本地 DeepSeek Harness (DSH) Agent 工作流。',
+    stack: ['Trae', 'DeepSeek Harness', 'Agent', 'Local Automation'],
     experience: [
       {
-        label: '工作经历',
-        text: '把重复的题库整理流程拆成可复用的脚本：调用 Agent 解析题目、处理公式，再输出可排版的中间结果。'
+        label: '技术演进与实践',
+        text: '我的 AI 辅助开发之路经历了三个阶段的跨越：\n  1. 编程辅助：在开发过程中，大量运用 Trae 解决日常代码难题。\n  2. 工具落地：利用 Trae 开发了日常小工具，把 AI 变成了生产力。\n  3. Agent 进阶：为了实现对电脑的深度管理和智能调度，将目光转向 DSH，亲手完成了插件的配置，并成功使用 DSH 来辅助管理电脑。'
       },
       {
-        label: '踩坑 01',
-        text: '问题：复杂 LaTeX 公式在解析和回填时容易转义错乱。解决：先做公式边界标记，再统一做转义与还原。'
+        label: '演进 01：从写代码到造工具',
+        text: '通过 Trae 跨越了单纯解决报错的阶段，开始将其作为核心开发引擎，独立主导开发了日常所需的 Xigai 和 Calendar 工具。把需求直接转化为实际落地的产品。'
       },
       {
-        label: '踩坑 02',
-        text: '问题：批处理失败后难以定位具体题目。解决：为每条任务加独立 ID 与日志，失败项单独重试，保证幂等。'
+        label: '演进 02：迈向 Agent 自动化',
+        text: '不再满足于单一工具的编写，为了实现对电脑的深度管理和复杂任务的智能调度，主动学习并亲手配置了 DSH 环境，完成了从传统开发者向 Agent 编排者视角的转变。'
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Agent-Workflow',
     demoUrl: null,
     images: [
-      'images/projects/agent/01-pipeline.png',
-      'images/projects/agent/02-agent-run.png',
-      'images/projects/agent/03-output.png'
+      {
+        path: 'images/projects/agent/01-dsh-console.png',
+        caption: '图 01：DSH Agent 运行与任务管理控制台'
+      },
+      {
+        path: 'images/projects/agent/02-trae-tools.png',
+        caption: '图 02：利用 Trae 辅助开发的日常工具界面'
+      }
     ]
   },
 
@@ -74,87 +84,105 @@ const projectData = {
     status: 'BUILDING',
     accent: '#9d4edd',
     accentSoft: 'rgba(157, 78, 221, 0.18)',
-    description: '基于 TypeScript 的日程管理工具，用强类型约束数据结构，提升本地工具的健壮性。',
-    stack: ['TypeScript', 'HTML/CSS', 'LocalStorage'],
+    description: '基于 TypeScript 开发的本地日程管理工具。完全使用 Trae 辅助生成，用于标注日常生活中的重要事项，纯粹为了便利生活。',
+    stack: ['TypeScript', 'Trae'],
     experience: [
       {
-        label: '工作经历',
-        text: '从零搭建日程数据模型与增删改查逻辑，用 TypeScript 把时间、状态和视图字段显式建模。'
+        label: '开发模式：AI 驱动与需求落地',
+        text: '我对 TypeScript 语言本身并不精通。这个项目的核心不在于手写代码，而在于：\n  1. 需求描述：将日常需要记录重要事项的痛点，转化为清晰的功能需求。\n  2. AI 全量生成：全程依赖 Trae 进行代码编写，我负责审查逻辑、提出修改意见和调试。\n  3. 价值体现：代码由 AI 生成，但我收获了实实在在好用的日程管理工具。'
       },
       {
-        label: '踩坑 01',
-        text: '问题：日期与时间边界在跨天、跨月时出现错位。解决：统一使用 ISO 时间戳存储，展示层再做本地化格式化。'
+        label: '实践：理解“提示词即代码”',
+        text: '问题：完全不懂语法，无法直接修改报错的代码。解决：不再去死磕 TS 语法，而是把报错信息喂给 Trae，用自然语言要求它修正，学会了将 AI 作为“外包工程师”来主导开发。'
       },
       {
-        label: '踩坑 02',
-        text: '问题：早期类型定义过宽，重构时到处报错。解决：收窄联合类型，先定义领域模型再写组件逻辑。'
+        label: '实践 02：强类型思维的初步感知',
+        text: '问题：早期对 TypeScript 的强类型约束不习惯。解决：在借助 Trae 开发的过程中，通过阅读它生成的 Type 定义，逐步感知了接口和数据类型的设计思想。'
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Calender',
     demoUrl: null,
     images: [
-      'images/projects/calender/01-overview.png',
-      'images/projects/calender/02-types.png'
+      {
+        path: 'images/projects/calender/01-ui.png',
+        caption: '图 01：Calender 本地界面截图'
+      },
+      {
+        path: 'images/projects/calender/02-trae-chat.png',
+        caption: '图 02：在 Trae 中辅助开发的对话界面'
+      }
     ]
   },
 
   nihongo: {
     kicker: 'PROJECT 04 / LEARNING TOOL',
     title: 'Nihongo',
-    status: 'MAINTAINED',
+    status: 'BUILDING',
     accent: '#fcee0a',
     accentSoft: 'rgba(252, 238, 10, 0.12)',
-    description: '基于原生 JavaScript 的日语学习辅助工具，解决日常学习中的记忆与复习痛点。',
-    stack: ['JavaScript', 'HTML/CSS', 'LocalStorage'],
+    description: '完全由 Trae 辅助生成的日语学习与单词背诵工具。用于解决日常日语学习中的痛点，让学习更高效。',
+    stack: ['Trae', 'JavaScript'],
     experience: [
       {
-        label: '工作经历',
-        text: '围绕五十音、词汇与复习节奏做轻量交互，尽量不依赖框架，把状态和本地存储控制在可理解的范围。'
+        label: '开发理念：用 AI 解决日常痛点',
+        text: '和 Calendar 类似，这也是一款完全由 AI 生成的提效小工具。日常背单词容易枯燥，我就把想要的复习逻辑、词库展示效果描述给 Trae，让它直接产出可用的代码。我不写底层实现，我只负责定义产品该长什么样。'
       },
       {
-        label: '踩坑 01',
-        text: '问题：刷新页面后学习进度丢失。解决：把进度序列化到 LocalStorage，并在初始化时做版本兼容。'
+        label: '实践：将生活痛点转化为代码',
+        text: '问题：市面上的工具不满足个性化背诵需求。解决：通过与 AI 多轮对话，精准表达想要的交互效果，最终生成了一个完全贴合自己学习习惯的本地工具。'
       },
       {
-        label: '踩坑 02',
-        text: '问题：连续操作时状态更新不同步。解决：收拢状态变更入口，避免多个事件各改一份数据。'
+        label: '实践：纯 AI 驱动的快速迭代',
+        text: '问题：如何在不学新语言的情况下实现复杂逻辑？解决：依靠 Trae 强大的代码生成能力，只要需求提得够细，它就能直接交付，让我体验到了“一句话一个功能”的极速迭代。'
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Nihongo',
     demoUrl: null,
     images: [
-      'images/projects/nihongo/01-overview.png',
-      'images/projects/nihongo/02-practice.png'
+      {
+        path: 'images/projects/nihongo/01-practice.png',
+        caption: '图 01：Nihongo 单词背诵界面'
+      },
+      {
+        path: 'images/projects/nihongo/02-structure.png',
+        caption: '图 02：开发过程中的代码结构'
+      }
     ]
   },
 
   xigai: {
-    kicker: 'PROJECT 05 / EARLY EXPERIMENT',
+    kicker: 'PROJECT 05 / TEAM WORK',
     title: 'Xigai',
     status: 'ARCHIVED',
     accent: '#3ddc97',
     accentSoft: 'rgba(61, 220, 151, 0.14)',
-    description: '早期 HTML/CSS 实验页面，用来练习布局、配色和响应式基础。',
-    stack: ['HTML', 'CSS'],
+    description: '习概课小组展示的静态网站项目。全程使用 Trae 辅助开发，并在此项目中成功实战了基于 GitHub Pull Request (PR) 的团队协作流。',
+    stack: ['HTML/CSS', 'Trae', 'GitHub PR'],
     experience: [
       {
-        label: '工作经历',
-        text: '作为最早期的静态页面练习，从手写布局开始理解盒模型、定位与响应式断点。'
+        label: '团队协作与工程实战',
+        text: '在习概课小组展示中，我自告奋勇承担了网页制作的核心任务：\n  1. 主导开发：虽然我不手写底层代码，但熟练利用 Trae 快速搭建了静态网站的基础框架。\n  2. 团队集成：我负责了整个项目的仓库管理，并在此过程中引入并实操了 GitHub 的 Pull Request 功能。\n  3. 协作闭环：成功将同伴负责的改动拉取到我的分支，进行代码审查与合并，最终融合成一个完整的展示项目。'
       },
       {
-        label: '踩坑 01',
-        text: '问题：固定宽度布局在小屏上溢出。解决：改用流式宽度与断点，先保证内容可读再谈装饰。'
+        label: '实战 01：跑通 GitHub 协作流',
+        text: '问题：团队多人修改同一个项目，容易产生冲突和覆盖。解决：主导了仓库管理，通过提交 Pull Request 来合并同伴代码。深刻理解了分支（Branch）、代码审查与合并（Merge）在团队开发中的关键作用。'
       },
       {
-        label: '踩坑 02',
-        text: '问题：样式散落、复用困难。解决：按模块拆分 CSS，并为颜色与间距建立简单变量。'
+        label: '实战 02：AI 生产力与团队引擎',
+        text: '问题：不懂底层代码如何有效推动项目？解决：把 Trae 作为我的“前端外包团队”，快速产出高质量页面。我把精力集中在需求拆解和 Git 版本控制上，撑起了整组的技术底子。'
       }
     ],
     repoUrl: 'https://github.com/Julian-Yulijin/Xigai',
     demoUrl: null,
     images: [
-      'images/projects/xigai/01-overview.png',
-      'images/projects/xigai/02-responsive.png'
+      {
+        path: 'images/projects/xigai/01-site.png',
+        caption: '图 01：Xigai 展示网页效果图'
+      },
+      {
+        path: 'images/projects/xigai/02-pr-merge.png',
+        caption: '图 02：GitHub 上成功合并的 Pull Request 截图'
+      }
     ]
   }
 };
@@ -239,7 +267,11 @@ window.projectData = projectData;
   function renderGallery(data) {
     galleryEl.innerHTML = '';
 
-    data.images.forEach(function (path, index) {
+    data.images.forEach(function (image, index) {
+      const path = typeof image === 'string' ? image : image.path;
+      const captionText = typeof image === 'string'
+        ? 'FIG ' + String(index + 1).padStart(2, '0') + ' / ' + path.split('/').pop()
+        : image.caption;
       const num = String(index + 1).padStart(2, '0');
       const fig = document.createElement('figure');
       fig.className = 'gallery-item';
@@ -255,7 +287,7 @@ window.projectData = projectData;
       img.src = root + path;
 
       const caption = document.createElement('figcaption');
-      caption.textContent = 'FIG ' + num + ' / ' + path.split('/').pop();
+      caption.textContent = captionText;
 
       fig.appendChild(img);
       fig.appendChild(caption);

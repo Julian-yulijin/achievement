@@ -909,6 +909,7 @@ body.modal-open {
   font-size: 13.5px;
   line-height: 1.9;
   color: var(--soft);
+  white-space: pre-line;
 }
 
 .modal-side {

@@ -1611,3 +1611,377 @@ body.view-about {
     box-shadow: inset 0 0 18px rgba(252, 238, 10, 0.06);
   }
 }
+
+/* ============================================================
+   System FX — 全屏系统事件特效
+   ============================================================ */
+body.fx-active {
+  cursor: crosshair;
+}
+
+body.fx-frontend .editor {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+body.fx-frontend .panel {
+  opacity: 0;
+  transform: translateY(110%);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.35s ease;
+}
+
+body.fx-tree-flicker .tree {
+  animation: fxTreeFlicker 0.22s steps(2, end) infinite;
+}
+
+@keyframes fxTreeFlicker {
+  0% {
+    opacity: 0.35;
+    filter: hue-rotate(0deg) brightness(1.35);
+  }
+  50% {
+    opacity: 1;
+    filter: hue-rotate(55deg) brightness(1.1);
+  }
+  100% {
+    opacity: 0.18;
+    filter: hue-rotate(-25deg) brightness(1.6);
+  }
+}
+
+body.fx-agent .ide {
+  grid-template-rows: 36px 34px minmax(0, 1fr) min(696px, 64vh) 24px;
+}
+
+body.fx-agent .panel {
+  border-top: 1px solid rgba(61, 220, 151, 0.35);
+  animation: fxAgentPulse 1.1s ease-in-out infinite alternate;
+}
+
+body.fx-agent .terminal {
+  box-shadow: inset 0 0 40px rgba(61, 220, 151, 0.14);
+}
+
+@keyframes fxAgentPulse {
+  from {
+    box-shadow: 0 0 0 rgba(61, 220, 151, 0);
+  }
+  to {
+    box-shadow: 0 -8px 40px rgba(61, 220, 151, 0.16);
+  }
+}
+
+.fx-flood {
+  color: #3ddc97;
+  text-shadow: 0 0 10px rgba(61, 220, 151, 0.55);
+}
+
+.sys-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: none;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  background: #02050a;
+  transition: opacity 0.42s ease;
+}
+
+.sys-fx.active {
+  opacity: 1;
+}
+
+.fx-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fx-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, transparent 36%, rgba(0, 0, 0, 0.78) 100%);
+  box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.8);
+}
+
+.fx-hud {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: rgba(0, 240, 255, 0.55);
+  opacity: 0.75;
+}
+
+.fx-scanlines {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 240, 255, 0.07) 0,
+    rgba(0, 240, 255, 0.07) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  opacity: 0.55;
+  animation: fxScanFlicker 1.6s linear infinite;
+}
+
+.fx-scanbar {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 14vh;
+  background: linear-gradient(180deg, transparent, rgba(0, 240, 255, 0.16) 55%, rgba(0, 240, 255, 0.6));
+  border-bottom: 1px solid rgba(0, 240, 255, 0.85);
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.45);
+}
+
+.mode-devtools .fx-scanlines,
+.mode-devtools .fx-scanbar {
+  display: block;
+}
+
+.mode-devtools .fx-scanbar {
+  animation: fxScanMove 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes fxScanMove {
+  from {
+    transform: translateY(-14vh);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes fxScanFlicker {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.fx-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(92vw, 1100px);
+  transform: translate(-50%, -50%);
+  font-family: var(--mono);
+  font-size: clamp(14px, 1.5vw, 23px);
+  letter-spacing: 0.12em;
+  text-align: center;
+  color: var(--cyan);
+  text-shadow: 0 0 18px rgba(0, 240, 255, 0.5), 0 0 50px rgba(0, 240, 255, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fx-center.show {
+  opacity: 1;
+}
+
+.fx-center.fx-top {
+  top: 13%;
+  font-size: 10.5px;
+  letter-spacing: 0.26em;
+  color: rgba(0, 240, 255, 0.68);
+}
+
+.fx-center.fx-plain {
+  font-size: clamp(13px, 1.35vw, 20px);
+  letter-spacing: 0.16em;
+  color: rgba(220, 255, 250, 0.94);
+  border-top: 1px solid rgba(0, 240, 255, 0.28);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.28);
+  padding: 14px 26px;
+  background: rgba(0, 240, 255, 0.035);
+}
+
+.fx-center.fx-agent-title {
+  font-size: clamp(18px, 2.4vw, 34px);
+  letter-spacing: 0.2em;
+  color: #3ddc97;
+  text-shadow: 0 0 20px rgba(61, 220, 151, 0.8), 0 0 70px rgba(61, 220, 151, 0.3);
+}
+
+.fx-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 8999;
+  display: block;
+  pointer-events: none;
+  opacity: 0.72;
+  mix-blend-mode: screen;
+}
+
+.mode-deploy .fx-vignette {
+  background: radial-gradient(circle at 50% 50%, transparent 24%, rgba(40, 0, 4, 0.82) 100%);
+}
+
+.fx-deploy-panel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(76vw, 720px);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.fx-deploy-title {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: rgba(255, 150, 150, 0.68);
+}
+
+.fx-deploy-title span {
+  color: #ff2a6d;
+  animation: fxAlertBlink 0.9s step-end infinite;
+}
+
+@keyframes fxAlertBlink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+.fx-progress {
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+  background: rgba(255, 0, 30, 0.08);
+  border: 1px solid rgba(255, 90, 90, 0.4);
+  box-shadow: inset 0 0 20px rgba(255, 0, 30, 0.18), 0 0 30px rgba(255, 0, 30, 0.22);
+}
+
+.fx-progress-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #ff2a6d, #ff8a5c);
+  box-shadow: 0 0 24px rgba(255, 42, 109, 0.7);
+  transition: width 0.5s ease;
+}
+
+.fx-progress-fill.hot {
+  animation: fxBarPulse 0.7s ease-in-out infinite alternate;
+}
+
+.fx-progress-fill.done {
+  background: linear-gradient(90deg, #3ddc97, #9dffcf);
+}
+
+@keyframes fxBarPulse {
+  from {
+    filter: brightness(0.9);
+  }
+  to {
+    filter: brightness(1.5);
+  }
+}
+
+.fx-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 190, 190, 0.62);
+}
+
+.fx-stage-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.fx-success {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%) scale(0.7);
+  font-family: var(--mono);
+  font-size: clamp(40px, 8vw, 110px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #3ddc97;
+  text-shadow: 0 0 28px rgba(61, 220, 151, 0.8), 0 0 90px rgba(61, 220, 151, 0.4);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1.4);
+}
+
+.fx-success.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.fx-success.show::after {
+  content: "";
+  position: absolute;
+  inset: -45%;
+  z-index: -1;
+  background: radial-gradient(circle, rgba(61, 220, 151, 0.4), transparent 62%);
+  animation: fxBurst 0.9s ease-out forwards;
+}
+
+@keyframes fxBurst {
+  from {
+    opacity: 0.9;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+@media (max-width: 640px) {
+  .fx-hud {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .fx-center {
+    width: 90vw;
+  }
+
+  .fx-center.fx-plain {
+    padding: 10px 12px;
+    font-size: 11px;
+    line-height: 1.8;
+  }
+
+  .fx-deploy-panel {
+    width: 82vw;
+  }
+}
+

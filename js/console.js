@@ -98,7 +98,16 @@
   }
 
   function printHelp() {
-    appendLine("Available commands: ls projects, cat about, git push, clear", "output");
+    appendLine("Available commands:", "output");
+    [
+      ["help", "show this help"],
+      ["ls projects", "list all projects"],
+      ["cat about", "who am i"],
+      ["git push", "simulate a git push"],
+      ["clear", "clear the terminal"]
+    ].forEach(function (item) {
+      appendLine("  " + item[0].padEnd(14, " ") + item[1], "output");
+    });
   }
 
   function printProjects() {
@@ -151,8 +160,7 @@
     } else if (normalized === "hello" || normalized === "team") {
       printWelcome();
     } else {
-      appendLine("command not found: " + cmd, "error");
-      appendLine("输入 help 查看可用指令。", "muted");
+      appendLine("bash: command not found: " + cmd, "error");
     }
   }
 
@@ -162,6 +170,14 @@
     cmdInput.value = "";
     runCommand(value);
   });
+
+  var panelClear = document.getElementById("panel-clear");
+  if (panelClear) {
+    panelClear.addEventListener("click", function () {
+      terminal.innerHTML = "";
+      cmdInput.focus();
+    });
+  }
 
   cmdInput.addEventListener("keydown", function (e) {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "l") {

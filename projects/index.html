@@ -7,7 +7,7 @@
   <title>Projects · Julian Yulijin</title>
   <link rel="stylesheet" href="/achievement/css/pages.css">
 <meta name="generator" content="Hexo 8.1.2"></head>
-<body class="page-shell page-projects">
+<body class="page-shell page-projects" data-root="/achievement/">
 
 <header class="mini-nav">
   <a class="mini-brand" href="/achievement/">JULIAN<span>.YULIJIN</span></a>
@@ -26,11 +26,11 @@
   <header class="page-hero">
     <span class="kicker">SELECTED WORK · 5 PROJECTS</span>
     <h1>Projects<span class="dot">.</span></h1>
-    <p>从早期 HTML 实验到全栈应用与 Agent 自动化，每一块都是亲手填的坑。</p>
+    <p>从早期 HTML 实验到全栈应用与 Agent 自动化，每一块都是亲手填的坑。点击卡片查看详情。</p>
   </header>
 
   <section class="bento-grid" aria-label="Project grid">
-    <article class="bento-card card-lotia">
+    <article class="bento-card card-lotia" data-project="lotia" role="button" tabindex="0" aria-label="Open Lotia details">
       <span class="bento-index">01</span>
       <div class="bento-body">
         <div class="bento-meta">FULL-STACK / WEB</div>
@@ -42,7 +42,7 @@
       </div>
     </article>
 
-    <article class="bento-card card-agent">
+    <article class="bento-card card-agent" data-project="agent" role="button" tabindex="0" aria-label="Open Agent-Workflow details">
       <span class="bento-index">02</span>
       <div class="bento-body">
         <div class="bento-meta">AUTOMATION / LOCAL</div>
@@ -54,7 +54,7 @@
       </div>
     </article>
 
-    <article class="bento-card card-calender">
+    <article class="bento-card card-calender" data-project="calender" role="button" tabindex="0" aria-label="Open Calender details">
       <span class="bento-index">03</span>
       <div class="bento-body">
         <div class="bento-meta">TOOL / TYPESCRIPT</div>
@@ -66,7 +66,7 @@
       </div>
     </article>
 
-    <article class="bento-card card-nihongo">
+    <article class="bento-card card-nihongo" data-project="nihongo" role="button" tabindex="0" aria-label="Open Nihongo details">
       <span class="bento-index">04</span>
       <div class="bento-body">
         <div class="bento-meta">LEARNING / JAVASCRIPT</div>
@@ -78,7 +78,7 @@
       </div>
     </article>
 
-    <article class="bento-card card-xigai">
+    <article class="bento-card card-xigai" data-project="xigai" role="button" tabindex="0" aria-label="Open Xigai details">
       <span class="bento-index">05</span>
       <div class="bento-body">
         <div class="bento-meta">EXPERIMENT / EARLY</div>
@@ -96,5 +96,42 @@
     <span>PROJECTS / BUILD 2026.11</span>
   </footer>
 </main>
+
+<div class="project-modal" id="project-modal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <article class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <header class="modal-head">
+      <button class="modal-back" type="button" data-close><span>←</span> BACK TO GRID</button>
+      <span class="modal-status" id="modal-status">IN PROGRESS</span>
+    </header>
+
+    <div class="modal-grid">
+      <section class="modal-main">
+        <span class="kicker" id="modal-kicker">PROJECT 01</span>
+        <h2 class="modal-title" id="modal-title">Lotia</h2>
+        <p class="modal-desc" id="modal-desc"></p>
+        <div class="modal-stack" id="modal-stack"></div>
+        <div class="modal-links" id="modal-links"></div>
+        <div class="modal-experience" id="modal-experience"></div>
+      </section>
+
+      <aside class="modal-side">
+        <div class="modal-gallery" id="modal-gallery"></div>
+
+        <div class="modal-qr">
+          <div class="qr-box" id="modal-qrcode" aria-label="Repository QR code"></div>
+          <div class="qr-meta">
+            <span class="qr-label">REPOSITORY / SCAN OR COPY</span>
+            <code class="qr-url" id="modal-repo-url"></code>
+            <button class="qr-copy" type="button" id="modal-copy">COPY URL</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </article>
+</div>
+
+<script src="/achievement/js/qrcode.min.js"></script>
+<script src="/achievement/js/projects.js"></script>
 </body>
 </html>

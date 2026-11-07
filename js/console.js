@@ -177,6 +177,13 @@
       return;
     }
 
+    if (normalized === "sudo join-team") {
+      if (window.__openJoinTeam) {
+        window.__openJoinTeam();
+      }
+      return;
+    }
+
     if (normalized === "help") {
       printHelp();
     } else if (normalized === "clear") {
